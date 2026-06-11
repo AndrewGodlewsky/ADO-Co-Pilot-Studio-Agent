@@ -156,6 +156,25 @@ Finds existing Azure DevOps work items in [ADO_PROJECT] by text, type, area path
 Returns the full details of one Azure DevOps work item by ID — all fields plus parent and child links. Use when the user references a specific item or to inspect a candidate parent. Read-only.
 ```
 
+**`List_Assigned_Work_Items`** — completion: **Send a specific response**
+
+> ⚠ Unlike the other two read tools, this one is **"Send a specific response"** (NOT "Don't respond") — it owns its own rendering of the grouped list.
+
+```
+Lists the Azure DevOps work items in [ADO_PROJECT] currently assigned to a person — by default the person asking. Use when someone asks what's assigned to them ('my work items', 'what am I working on', 'my tasks', 'my backlog') or to another named user. Returns active items by default (excludes Closed/Done/Removed unless asked). Read-only; never creates or changes items.
+```
+
+**Inputs:**
+| Name | Type | Required | Default | Notes |
+|---|---|---|---|---|
+| `Assignee` | string | no | authenticated user's UPN | Fill with the asking user's UPN unless they name someone else |
+| `IncludeClosed` | boolean | no | `false` | When true, include Closed/Done/Removed |
+| `WorkItemType` | string | no | `Any` | Epic / Feature / User Story / Task / Any |
+| `MaxResults` | integer | no | `50` | Cap on items returned |
+
+**Orchestrator instruction line (paste into the instructions, keep within the ~1,500-char band):**
+> To show a person their assigned items (their own or a named user's), use /List_Assigned_Work_Items.
+
 **`Create_Backlog_Tree`** — completion: **Send a specific response**
 ```
 Creates the confirmed work items in Azure DevOps from a structured tree, links parents to children, and returns the new IDs and URLs. Creates only Features, Stories, and Tasks. Call only after the user confirms the preview.
