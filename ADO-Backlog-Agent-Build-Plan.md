@@ -64,7 +64,7 @@ There is no pytest. Each task's "test" is one of these, and you do it **before**
 ### Task 0.2: Create the ALM solution
 **Artifacts:** Create solution `ADO Backlog Agent`
 
-- [ ] **Step 1 — Expected:** a solution exists that will contain the agent, 5 flows, and connection references.
+- [ ] **Step 1 — Expected:** a solution exists that will contain the agent, 6 flows, and connection references.
 - [ ] **Step 2 — Build:** In Power Apps maker portal → Solutions → **New solution** → Name `ADO Backlog Agent`, set a publisher with a recognizable prefix.
 - [ ] **Step 3 — Verify:** the empty solution opens and shows 0 objects.
 - [ ] **Step 4 — Checkpoint:** solution saved. All subsequent artifacts are created **inside** this solution.
