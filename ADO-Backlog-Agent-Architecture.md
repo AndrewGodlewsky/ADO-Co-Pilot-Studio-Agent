@@ -359,7 +359,7 @@ The fields the agent reads, sets at creation, and/or updates per work-item type.
 
 1. **Author KB-1, KB-2, KB-3** (`.docx`, SharePoint). KB-3 is a **blocking dependency** for correct right-sizing and placement.
 2. **Provision identity:** service account + ADO connection (Work Items R/W), DLP classification, rotation owner.
-3. **Build read flows** `Search_Work_Items`, `Get_Work_Item_Details`; test queries and keyed-JSON outputs.
+3. **Build read flows** `Search_Work_Items`, `Get_Work_Item_Details`, `List_Assigned_Work_Items`; test queries and keyed-JSON outputs.
 4. **Build `Create_Backlog_Tree`:** tree creation, topological parent linking, **Epic rejection**, `requested-by` stamp, keyed outputs. Test the Epic-rejection path and partial-failure behavior explicitly.
 4b. **Build `Update_Work_Item` + `Add_Comment`:** field PATCH with Epic-target rejection and type→Epic rejection; comment via the Comments API with Epic-target rejection; `requested-by` stamp on both. Test the Epic-target rejection path for each.
 5. **Create agent** → settings per §4.1 (verify **Allow ungrounded ON** and **Entra auth**) → description §4.2 → instructions §4.3 (`[PROJECT]`/`[ORG]` resolved).
