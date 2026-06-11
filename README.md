@@ -36,7 +36,7 @@ There are **two separate agents** here, plus a shared **methodology library** th
 
 | File | What it is | Read it when… |
 |---|---|---|
-| **`ADO-Backlog-Agent-Architecture.md`** *(v1.6)* | **The source-of-truth design spec.** Scope, the no-Epics guarantee, the 3-gate quality engine, all 5 tools, the `Backlog_Builder` child agent, topics, the per-type field catalogs, agent settings, identity/audit, and the evolution path. | You want to understand or change *what* the agent is and *why*. |
+| **`ADO-Backlog-Agent-Architecture.md`** *(v1.6)* | **The source-of-truth design spec.** Scope, the no-Epics guarantee, the 3-gate quality engine, all 6 tools, the `Backlog_Builder` child agent, topics, the per-type field catalogs, agent settings, identity/audit, and the evolution path. | You want to understand or change *what* the agent is and *why*. |
 | **`ADO-Backlog-Agent-Build-Plan.md`** | **The step-by-step build plan.** Phased, dependency-ordered tasks (knowledge → connection → read flows → write flows → agent → child agent → topics → evaluation → pilot), each with build steps and verification. Includes starter content for KB-1 and KB-2. | You're actually building it in the portals. |
 | **`ADO-Backlog-Agent-CopilotStudio-Setup.md`** | **Copy-paste configuration.** Every Copilot Studio setting (with exact UI location and value), plus all descriptions, instructions, tool descriptions, child-agent required inputs, and topic message text — ready to paste. | You're configuring the agent/child in Copilot Studio. |
 | **`ADO-Backlog-Agent-Knowledge-Plan.md`** *(v1.0)* | **The knowledge-base plan.** The SharePoint folder structure (~17 single-topic docs across 3 sources), each doc's purpose and consumer, and the knowledge-vs-instructions boundary. | You're planning or authoring the agent's knowledge. |
@@ -84,7 +84,7 @@ There are **two separate agents** here, plus a shared **methodology library** th
 
 ADO BACKLOG AGENT — full document set & how each feeds the next (current status):
 
-  ★ Architecture (v1.6) ── source of truth: scope, no-Epics, the gates, 5 tools, fields   ✅
+  ★ Architecture (v1.6) ── source of truth: scope, no-Epics, the gates, 6 tools, fields   ✅
         │
         ├─ BUILD ▸ Build-Plan ─► CopilotStudio-Setup   ✅  (Setup = the file you paste from)
         │
@@ -101,7 +101,7 @@ ADO BACKLOG AGENT — full document set & how each feeds the next (current statu
 Status legend:  ✅ done   ⛔ blocked, needs you   ⏳ pending portal build
   ✅  All design/config docs + the 11 generatable KB drafts (incl. KB-1.6) are written, reviewed, and converted to .docx (knowledge/dist/).
   ⛔  KB-3 "Team Conventions" — fill knowledge/KB-3-Team-Conventions/_INTERVIEW.md to unblock placement & custom-field writes.
-  ⏳  Copilot Studio portal build — the agent, 5 flows, the Backlog_Builder child, topics, and the parent-aware wiring are designed but not yet built.
+  ⏳  Copilot Studio portal build — the agent, 6 flows, the Backlog_Builder child, topics, and the parent-aware wiring are designed but not yet built.
 ```
 
 ---

@@ -389,7 +389,7 @@ ORDER BY [System.ChangedDate] DESC
 | §3.4 Gate 0 / parent-aware elicitation (ParentContext) | 5.2 (instructions via Setup §3), 7.1 (ParentContext input), 7.2 (Gate 0 in child instructions), 7.3 (orchestrator Gate 0), 10.1 (eval) |
 | §4.1 settings (esp. ungrounded ON, Entra) | 5.1 (with the ungrounded test) |
 | §4.2/§4.3 description/instructions | 5.2 |
-| §4.4–4.7.2 the five flows | 3.1, 3.2, 4.1, 4.2, 4.3 |
+| §4.4–4.7.2 the six flows | 3.1, 3.2, 3.3, 4.1, 4.2, 4.3 |
 | §4.8 topics + T4 cards | 8.1, 8.2, 8.3 |
 | §4.9 knowledge | 1.2 (upload pre-authored), 1.3 (KB-3), 6.1 (wire) |
 | §4.10 identity/audit/credits/ALM | 2.1, 2.2, 4.x (stamp), 11.1 (cap), 0.2 (solution) |
