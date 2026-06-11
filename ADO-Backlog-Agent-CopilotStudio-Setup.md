@@ -142,9 +142,9 @@ Definitions of Epic, Feature, User Story, and Task; signals that something is to
 
 ---
 
-## 5. Tools (the 5 agent flows) — descriptions + completion behavior
+## 5. Tools (the 6 agent flows) — descriptions + completion behavior
 
-> For each flow added as a tool: paste the description, and set **completion behavior** as noted. Read tools = "Don't respond" (agent folds data into its answer). Write tools = "Send a specific response" (so IDs/results render).
+> For each flow added as a tool: paste the description, and set **completion behavior** as noted. The two browse/lookup read tools (`Search_Work_Items`, `Get_Work_Item_Details`) = "Don't respond" (agent folds data into its answer); the exception is `List_Assigned_Work_Items`, which uses "Send a specific response" because it owns its own rendering. Write tools = "Send a specific response" (so IDs/results render).
 
 **`Search_Work_Items`** — completion: **Don't respond**
 ```
