@@ -12,7 +12,7 @@ There are **two separate agents** here, plus a shared **methodology library** th
 
 | Body of work | What it is | Status |
 |---|---|---|
-| 🟢 **ADO Backlog Agent** | A **read + write** agent that lets the team find, create, update, and comment on **Azure DevOps** work items (Features, User Stories, Tasks — never Epics) through a quality-gated, confirm-before-write conversation. **This is the current build.** | Design complete (v1.5); not yet built. Blocking dependency: the team-authored knowledge doc (KB-3). |
+| 🟢 **ADO Backlog Agent** | A **read + write** agent that lets the team find, create, update, and comment on **Azure DevOps** work items (Features, User Stories, Tasks — never Epics) through a quality-gated, confirm-before-write conversation. **This is the current build.** | Design complete (v1.6); not yet built. Blocking dependency: the team-authored knowledge doc (KB-3). |
 | 🔵 **Path-Finder Agent** | An earlier, **read-only advisory** agent that helps employees choose the right Microsoft AI/automation tool and plan their projects. A different agent for a different job. | Design complete; awaiting org-specific knowledge docs (B-1…B-10). |
 | 📚 **Copilot Studio methodology** | Reusable research on how to build *any* Copilot Studio agent well (knowledge prep, instructions, tool/knowledge steering). Written during Path-Finder, applied to the ADO agent. | Reference — verified June 2026; re-verify quarterly. |
 
@@ -36,7 +36,7 @@ There are **two separate agents** here, plus a shared **methodology library** th
 
 | File | What it is | Read it when… |
 |---|---|---|
-| **`ADO-Backlog-Agent-Architecture.md`** *(v1.5)* | **The source-of-truth design spec.** Scope, the no-Epics guarantee, the 3-gate quality engine, all 5 tools, the `Backlog_Builder` child agent, topics, the per-type field catalogs, agent settings, identity/audit, and the evolution path. | You want to understand or change *what* the agent is and *why*. |
+| **`ADO-Backlog-Agent-Architecture.md`** *(v1.6)* | **The source-of-truth design spec.** Scope, the no-Epics guarantee, the 3-gate quality engine, all 5 tools, the `Backlog_Builder` child agent, topics, the per-type field catalogs, agent settings, identity/audit, and the evolution path. | You want to understand or change *what* the agent is and *why*. |
 | **`ADO-Backlog-Agent-Build-Plan.md`** | **The step-by-step build plan.** Phased, dependency-ordered tasks (knowledge → connection → read flows → write flows → agent → child agent → topics → evaluation → pilot), each with build steps and verification. Includes starter content for KB-1 and KB-2. | You're actually building it in the portals. |
 | **`ADO-Backlog-Agent-CopilotStudio-Setup.md`** | **Copy-paste configuration.** Every Copilot Studio setting (with exact UI location and value), plus all descriptions, instructions, tool descriptions, child-agent required inputs, and topic message text — ready to paste. | You're configuring the agent/child in Copilot Studio. |
 | **`ADO-Backlog-Agent-Knowledge-Plan.md`** *(v1.0)* | **The knowledge-base plan.** The SharePoint folder structure (~17 single-topic docs across 3 sources), each doc's purpose and consumer, and the knowledge-vs-instructions boundary. | You're planning or authoring the agent's knowledge. |
@@ -84,7 +84,7 @@ There are **two separate agents** here, plus a shared **methodology library** th
 
 ADO BACKLOG AGENT — full document set & how each feeds the next (current status):
 
-  ★ Architecture (v1.5) ── source of truth: scope, no-Epics, the gates, 5 tools, fields   ✅
+  ★ Architecture (v1.6) ── source of truth: scope, no-Epics, the gates, 5 tools, fields   ✅
         │
         ├─ BUILD ▸ Build-Plan ─► CopilotStudio-Setup   ✅  (Setup = the file you paste from)
         │
@@ -108,7 +108,7 @@ Status legend:  ✅ done   ⛔ blocked, needs you   ⏳ pending portal build
 
 ## Current status & what's outstanding (ADO Backlog Agent)
 
-- ✅ **Design, build plan, setup config, and knowledge plan are complete** and internally consistent (Architecture v1.5).
+- ✅ **Design, build plan, setup config, and knowledge plan are complete** and internally consistent (Architecture v1.6).
 - ✅ **Knowledge base drafted & refined** — the 11 generatable docs (KB-1 Quality ×6, KB-2 Leveling ×4, KB-4 FAQ ×1) are researched, drafted, and passed the quality rubric, under `knowledge/`. See `ADO-Backlog-Agent-Knowledge-Acquisition-Plan.md` for how they were produced.
 - ⛔ **Blocking dependency — KB-3 "Team Conventions":** the team must supply real area paths, iteration paths, custom-field reference names (Release/Deploy/Feature-flag notes), Value Area picklist values, and the Epic owner. This single doc feeds both the write flows and the child agent's input-validation lists. Nothing should go live without it.
   - **👉 YOUR NEXT ACTION:** answer the questions in **`knowledge/KB-3-Team-Conventions/_INTERVIEW.md`** (each has a "where to find it in ADO" hint). Your answers fill the 6 KB-3 templates (`3.1`–`3.6`) in that same folder. This is the one task that unblocks everything downstream.
