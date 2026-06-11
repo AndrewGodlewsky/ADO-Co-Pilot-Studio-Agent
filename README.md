@@ -43,6 +43,8 @@ There are **two separate agents** here, plus a shared **methodology library** th
 | **`ADO-Backlog-Agent-Knowledge-Acquisition-Plan.md`** *(v1.0)* | **The knowledge-authoring playbook.** How to research → draft → Ralph-refine → ship the KB docs; the two-track (generatable vs team-only) pipeline; the rubric/scorecard/interview artifacts under `knowledge/`. | You're producing the actual knowledge documents. |
 | **`ADO-Backlog-Agent-Parent-Aware-Elicitation-Design.md`** *(v1.0)* | **Design spec — parent-aware elicitation.** Gate 0 (parent grounding), the `ParentContext` packet, the inherit-don't-re-ask rule, and the gap-targeted question banks the agent uses to build great children under a Feature/Epic. | You want to understand or change *how the agent interviews* using the parent's context. |
 | **`ADO-Backlog-Agent-Parent-Aware-Elicitation-Build-Plan.md`** | **Implementation plan — parent-aware elicitation.** The 9 task-by-task steps (author KB-1.6 → update Architecture/Setup → ship → portal build), each with exact content and verification. | You're implementing the parent-aware capability. |
+| **`ADO-Backlog-Agent-Assigned-Items-Design.md`** *(v1.0)* | **Design spec — assigned-items listing.** The `List_Assigned_Work_Items` read tool: self-or-named-teammate scope, active-by-default state filtering, grouped presentation, and the `@me`/identity wiring. | You want the agent to list the items assigned to a user. |
+| **`ADO-Backlog-Agent-Assigned-Items-Build-Plan.md`** | **Implementation plan — assigned-items listing.** Phase A repo edits (Architecture/Setup/Build-Plan/KB) and Phase B portal build (the flow, tool wiring, identity, verification matrix). | You're implementing the assigned-items capability. |
 
 ### 🔵 Path-Finder Agent (separate, earlier agent — context)
 
@@ -90,8 +92,11 @@ ADO BACKLOG AGENT — full document set & how each feeds the next (current statu
         │              ✅ 11/11 generatable docs written, reviewed, shipped to .docx
         │              ⛔ KB-3 "Team Conventions" ── you author (fill _INTERVIEW.md)
         │
-        └─ CAPABILITY ▸ Parent-Aware-Elicitation-Design ─► …-Build-Plan
-                        ✅ T1–T8 done — Gate 0 + ParentContext, woven into Architecture §3.4 & Setup §3/§6
+        ├─ CAPABILITY ▸ Parent-Aware-Elicitation-Design ─► …-Build-Plan
+        │              ✅ T1–T8 done — Gate 0 + ParentContext, woven into Architecture §3.4 & Setup §3/§6
+        │
+        └─ CAPABILITY ▸ Assigned-Items-Design ─► …-Build-Plan
+                        ⏳ designed; portal build pending (3rd read tool)
 
 Status legend:  ✅ done   ⛔ blocked, needs you   ⏳ pending portal build
   ✅  All design/config docs + the 11 generatable KB drafts (incl. KB-1.6) are written, reviewed, and converted to .docx (knowledge/dist/).
