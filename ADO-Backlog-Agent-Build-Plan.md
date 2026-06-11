@@ -4,7 +4,7 @@
 
 **Goal:** Stand up a Copilot Studio agent that lets the Power Platform team find, create, update, and comment on Azure DevOps work items (Features, User Stories, Tasks — never Epics) through a quality-gated, confirm-before-write conversation.
 
-**Architecture:** A single generative-orchestration agent with two read flows, three write flows, one child agent (the quality interviewer), and five topics. All Azure DevOps access runs through Power Automate agent flows on a single service-account connection (Approach A). Hard rules (no Epic writes, confirm-before-write) are enforced by tool surface + server-side validation, not by prompt text.
+**Architecture:** A single generative-orchestration agent with **three** read flows, three write flows, one child agent (the quality interviewer), and five topics. All Azure DevOps access runs through Power Automate agent flows on a single service-account connection (Approach A). Hard rules (no Epic writes, confirm-before-write) are enforced by tool surface + server-side validation, not by prompt text.
 
 **Tech stack:** Microsoft Copilot Studio (generative orchestration) · Power Automate agent flows · Azure DevOps connector + "Send an HTTP request to Azure DevOps" (REST, api-version 7.1) · SharePoint document library (`.docx` knowledge) · Microsoft Entra ID (user auth) · Adaptive Cards (Teams previews) · a Power Platform **solution** for ALM.
 
@@ -64,7 +64,7 @@ There is no pytest. Each task's "test" is one of these, and you do it **before**
 ### Task 0.2: Create the ALM solution
 **Artifacts:** Create solution `ADO Backlog Agent`
 
-- [ ] **Step 1 — Expected:** a solution exists that will contain the agent, 5 flows, and connection references.
+- [ ] **Step 1 — Expected:** a solution exists that will contain the agent, 6 flows, and connection references.
 - [ ] **Step 2 — Build:** In Power Apps maker portal → Solutions → **New solution** → Name `ADO Backlog Agent`, set a publisher with a recognizable prefix.
 - [ ] **Step 3 — Verify:** the empty solution opens and shows 0 objects.
 - [ ] **Step 4 — Checkpoint:** solution saved. All subsequent artifacts are created **inside** this solution.
@@ -162,6 +162,14 @@ ORDER BY [System.ChangedDate] DESC
 - [ ] **Step 5 — Description:** *"Returns the full details of one Azure DevOps work item by ID — all fields plus parent and child links. Use when the user references a specific item or to inspect a candidate parent. Read-only."*
 - [ ] **Step 6 — Checkpoint:** Save into the solution.
 
+### Task 3.3: Build `List_Assigned_Work_Items`
+**Artifacts:** Create agent flow `List_Assigned_Work_Items` (in solution)
+
+- [ ] **Step 1 — Expected behavior (the test):** given `Assignee="<a real UPN with active items>"`, the flow returns `Items[]` (each `{Id, Type, Title, State, Priority, IterationPath, AreaPath, AssignedTo, Url}`), plus `ResolvedAssignee` and `Count`, excluding Closed/Done/Removed.
+- [ ] **Step 2 — Build:** see `ADO-Backlog-Agent-Assigned-Items-Build-Plan.md` Phase B (Task B1) for the full WIQL + connector steps. Filter on `[System.AssignedTo] = @Assignee` (literal UPN, never `@me`); state filter unless `IncludeClosed`; optional `WorkItemType`; `ORDER BY Priority ASC, ChangedDate DESC`; cap at `MaxResults`.
+- [ ] **Step 3 — Verify:** run the Task B4 verification matrix (self / named other / empty / IncludeClosed / type filter / cap / @me regression / bad name).
+- [ ] **Step 4 — Checkpoint:** Publish the flow.
+
 ---
 
 ## Phase 4 — Write flows (each rejects Epics in isolation before it is ever wired to the agent)
@@ -246,13 +254,14 @@ ORDER BY [System.ChangedDate] DESC
 - [ ] **Step 3 — Verify retrieval:** test pane → "what makes a good acceptance criterion?" cites KB-1; "what's the difference between a feature and an epic?" cites KB-2; "what area paths do we use?" cites KB-3.
 - [ ] **Step 4 — Checkpoint:** Publish.
 
-### Task 6.2: Add the two read tools
+### Task 6.2: Add the read tools
 **Artifacts:** Modify agent — add `Search_Work_Items`, `Get_Work_Item_Details` as tools
 
 - [ ] **Step 1 — Expected:** agent can search and fetch items; both tools set to "Don't respond" so the agent folds results into its answer.
 - [ ] **Step 2 — Build:** add both flows as tools; confirm each tool's description matches Phase 3; set completion behavior **Don't respond**.
 - [ ] **Step 3 — Verify:** test pane → "find stories about login in our backlog" → agent calls `Search_Work_Items`, lists results with IDs/links. "Show me details of 1234" → calls `Get_Work_Item_Details`.
 - [ ] **Step 4 — Checkpoint:** Publish.
+- [ ] **Step 5 — Add `List_Assigned_Work_Items`:** add the flow as a tool; paste its description from Setup; set completion behavior **Send specific response** (NOT "Don't respond"); add the orchestrator instruction line. Verify in the test pane: "show me my work items" → agent calls the tool and renders a grouped list.
 
 ---
 
@@ -380,7 +389,7 @@ ORDER BY [System.ChangedDate] DESC
 | §3.4 Gate 0 / parent-aware elicitation (ParentContext) | 5.2 (instructions via Setup §3), 7.1 (ParentContext input), 7.2 (Gate 0 in child instructions), 7.3 (orchestrator Gate 0), 10.1 (eval) |
 | §4.1 settings (esp. ungrounded ON, Entra) | 5.1 (with the ungrounded test) |
 | §4.2/§4.3 description/instructions | 5.2 |
-| §4.4–4.7.2 the five flows | 3.1, 3.2, 4.1, 4.2, 4.3 |
+| §4.4–4.7.2 the six flows | 3.1, 3.2, 3.3, 4.1, 4.2, 4.3 |
 | §4.8 topics + T4 cards | 8.1, 8.2, 8.3 |
 | §4.9 knowledge | 1.2 (upload pre-authored), 1.3 (KB-3), 6.1 (wire) |
 | §4.10 identity/audit/credits/ALM | 2.1, 2.2, 4.x (stamp), 11.1 (cap), 0.2 (solution) |

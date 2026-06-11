@@ -1,6 +1,6 @@
 # ADO Backlog Agent — Architecture Design Document
 
-**Version:** 1.5 · **Date:** 2026-06-11 · **Status:** Design for build · **v1.5 change:** added Gate 0 (Parent Grounding) and parent-aware enhancements to Gates 1–3; `Backlog_Builder` gains a `ParentContext` input — see `ADO-Backlog-Agent-Parent-Aware-Elicitation-Design.md` · **v1.4 change:** corrected §4.1 settings against Microsoft Learn — "Allow ungrounded responses" is the single general-knowledge toggle (kept ON for clarifying questions; no separate general-knowledge off-switch), and Work IQ requires Authenticate-with-Microsoft; see `ADO-Backlog-Agent-CopilotStudio-Setup.md` for copy-paste config · **v1.3 change:** added Title to the catalog; User Story field set = Feature field set; Task field set = Title + Description only (§4.11, §3.4) · **v1.2 change:** pulled Update + comments into v1 — added `Update_Work_Item` (§4.7.1) and `Add_Comment` (§4.7.2), the edit path (§3.2), diff-preview confirmation (§4.8 T4); Epics kept fully read-only pending §7.10 · **v1.1 change:** added the Feature field catalog (§4.11), wired it into the create payload (§4.7) and the Gate-2 floor (§3.4)
+**Version:** 1.6 · **Date:** 2026-06-11 · **Status:** Design for build · **v1.6 change:** added `List_Assigned_Work_Items` (§4.5b) — a third read tool that lists the items assigned to the asking user (or a named teammate); see `ADO-Backlog-Agent-Assigned-Items-Design.md` · **v1.5 change:** added Gate 0 (Parent Grounding) and parent-aware enhancements to Gates 1–3; `Backlog_Builder` gains a `ParentContext` input — see `ADO-Backlog-Agent-Parent-Aware-Elicitation-Design.md` · **v1.4 change:** corrected §4.1 settings against Microsoft Learn — "Allow ungrounded responses" is the single general-knowledge toggle (kept ON for clarifying questions; no separate general-knowledge off-switch), and Work IQ requires Authenticate-with-Microsoft; see `ADO-Backlog-Agent-CopilotStudio-Setup.md` for copy-paste config · **v1.3 change:** added Title to the catalog; User Story field set = Feature field set; Task field set = Title + Description only (§4.11, §3.4) · **v1.2 change:** pulled Update + comments into v1 — added `Update_Work_Item` (§4.7.1) and `Add_Comment` (§4.7.2), the edit path (§3.2), diff-preview confirmation (§4.8 T4); Epics kept fully read-only pending §7.10 · **v1.1 change:** added the Feature field catalog (§4.11), wired it into the create payload (§4.7) and the Gate-2 floor (§3.4)
 **Platform:** Microsoft Copilot Studio · **Target system:** Azure DevOps (single project)
 **Derived from:** stakeholder design decisions (this session) · Copilot-Studio-Description-and-Instructions-Guide · Copilot-Studio-Instruction-Formats-Deep-Dive · Copilot-Studio-Knowledge-Preparation-Guide · Path-Finder-Agent-Architecture (precedent for house conventions)
 
@@ -20,6 +20,7 @@
 
 ### 2.1 What the agent will do
 - **Read** Epics, Features, User Stories, and Tasks (search the backlog, locate a parent, inspect one item, check for duplicates).
+- **List a person's assigned items** — the asking user's own active items by default, or a named teammate's, via `List_Assigned_Work_Items` (read-only).
 - **Create** Features, User Stories, and Tasks — single items or a multi-level Feature→Story→Task tree — through a structured quality interview, a duplicate check, and a previewed, confirmed write.
 - **Update** existing Features, User Stories, and Tasks (field edits — including the post-create fields in §4.11) and **add discussion comments**, each through a confirmed diff preview.
 
@@ -63,6 +64,8 @@
 │  ├── TOOLS (Power Automate agent flows → ADO connector, service-account)   │
 │  │     /Search_Work_Items      ── read: query by text/type/area + DUP check│
 │  │     /Get_Work_Item_Details  ── read: full fields + parent/child links   │
+│  │     /List_Assigned_Work_Items ─ read: items assigned to a user (self    │
+│  │                                 by default, or a named teammate)        │
 │  │     /Create_Backlog_Tree    ── WRITE: builds Feature→Story→Task tree,    │
 │  │                                 links them, REJECTS Epic, stamps         │
 │  │                                 requested-by, returns IDs + URLs         │
@@ -233,6 +236,17 @@ user to [ORG: contact].
 | Outputs (keyed JSON) | `Id, Type, Title, Description, AcceptanceCriteria, State, AreaPath, IterationPath, AssignedTo, Parent, Children[], Url` |
 | After running | **Don't respond** |
 
+### 4.5b Tool: `List_Assigned_Work_Items` (read — assigned items)
+
+| Aspect | Spec |
+|---|---|
+| Description | "Lists the Azure DevOps work items in [PROJECT] currently assigned to a person — by default the person asking. Use when someone asks what's assigned to them ('my work items', 'what am I working on', 'my tasks', 'my backlog') or to another named user. Returns active items by default (excludes Closed/Done/Removed unless asked). Read-only; never creates or changes items." |
+| Inputs | `Assignee` (optional UPN/email; **default = authenticated user UPN**), `IncludeClosed` (bool, default false), `WorkItemType` (Epic/Feature/User Story/Task/Any, default Any), `MaxResults` (default 50) |
+| Outputs (keyed JSON) | `Items[]` → `{Id, Type, Title, State, Priority, IterationPath, AreaPath, AssignedTo, Url}` · `ResolvedAssignee` · `Count` |
+| Flow internals | WIQL filtered on `[System.AssignedTo] = @assignee` (literal end-user UPN, **never `@me`**); excludes terminal states unless `IncludeClosed`; optional type filter; `ORDER BY Priority ASC, ChangedDate DESC`; expand IDs→fields; service-account connection; async OFF, respond <100s; published |
+| Identity | Orchestrator fills `Assignee` from the authenticated user's UPN system variable unless the user names someone else |
+| After running | **Send specific response** — agent renders the grouped list (by State, then Priority). Different from `Search_Work_Items`' "Don't respond" rule. |
+
 ### 4.6 Child agent: `Backlog_Builder` (the quality engine)
 
 | Aspect | Spec |
@@ -345,7 +359,7 @@ The fields the agent reads, sets at creation, and/or updates per work-item type.
 
 1. **Author KB-1, KB-2, KB-3** (`.docx`, SharePoint). KB-3 is a **blocking dependency** for correct right-sizing and placement.
 2. **Provision identity:** service account + ADO connection (Work Items R/W), DLP classification, rotation owner.
-3. **Build read flows** `Search_Work_Items`, `Get_Work_Item_Details`; test queries and keyed-JSON outputs.
+3. **Build read flows** `Search_Work_Items`, `Get_Work_Item_Details`, `List_Assigned_Work_Items`; test queries and keyed-JSON outputs.
 4. **Build `Create_Backlog_Tree`:** tree creation, topological parent linking, **Epic rejection**, `requested-by` stamp, keyed outputs. Test the Epic-rejection path and partial-failure behavior explicitly.
 4b. **Build `Update_Work_Item` + `Add_Comment`:** field PATCH with Epic-target rejection and type→Epic rejection; comment via the Comments API with Epic-target rejection; `requested-by` stamp on both. Test the Epic-target rejection path for each.
 5. **Create agent** → settings per §4.1 (verify **Allow ungrounded ON** and **Entra auth**) → description §4.2 → instructions §4.3 (`[PROJECT]`/`[ORG]` resolved).

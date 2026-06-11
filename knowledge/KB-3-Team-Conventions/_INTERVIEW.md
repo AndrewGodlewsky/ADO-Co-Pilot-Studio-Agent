@@ -22,6 +22,8 @@
 - Is Story Points exposed on Feature in your template? Is Effort exposed on User Story?
   (Find in ADO: Org Settings > Process > [your process] > [work item type] > Fields;
    or REST: GET {org}/{project}/_apis/wit/fields)
+- Which States count as "closed/done" and should be EXCLUDED by default from a person's "active assigned items" list? (e.g. Agile: Closed, Removed · Scrum: Done, Removed)
+  (Find in ADO: Org Settings > Process > [your process] > [work item type] > States)
 
 ## 3.4 Tags & the Requested-By convention
 - Standard tag taxonomy.

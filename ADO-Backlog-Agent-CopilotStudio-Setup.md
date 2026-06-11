@@ -142,9 +142,9 @@ Definitions of Epic, Feature, User Story, and Task; signals that something is to
 
 ---
 
-## 5. Tools (the 5 agent flows) — descriptions + completion behavior
+## 5. Tools (the 6 agent flows) — descriptions + completion behavior
 
-> For each flow added as a tool: paste the description, and set **completion behavior** as noted. Read tools = "Don't respond" (agent folds data into its answer). Write tools = "Send a specific response" (so IDs/results render).
+> For each flow added as a tool: paste the description, and set **completion behavior** as noted. The two browse/lookup read tools (`Search_Work_Items`, `Get_Work_Item_Details`) = "Don't respond" (agent folds data into its answer); the exception is `List_Assigned_Work_Items`, which uses "Send a specific response" because it owns its own rendering. Write tools = "Send a specific response" (so IDs/results render).
 
 **`Search_Work_Items`** — completion: **Don't respond**
 ```
@@ -155,6 +155,25 @@ Finds existing Azure DevOps work items in [ADO_PROJECT] by text, type, area path
 ```
 Returns the full details of one Azure DevOps work item by ID — all fields plus parent and child links. Use when the user references a specific item or to inspect a candidate parent. Read-only.
 ```
+
+**`List_Assigned_Work_Items`** — completion: **Send a specific response**
+
+> ⚠ Unlike the other two read tools, this one is **"Send a specific response"** (NOT "Don't respond") — it owns its own rendering of the grouped list.
+
+```
+Lists the Azure DevOps work items in [ADO_PROJECT] currently assigned to a person — by default the person asking. Use when someone asks what's assigned to them ('my work items', 'what am I working on', 'my tasks', 'my backlog') or to another named user. Returns active items by default (excludes Closed/Done/Removed unless asked). Read-only; never creates or changes items.
+```
+
+**Inputs:**
+| Name | Type | Required | Default | Notes |
+|---|---|---|---|---|
+| `Assignee` | string | no | authenticated user's UPN | Fill with the asking user's UPN unless they name someone else |
+| `IncludeClosed` | boolean | no | `false` | When true, include Closed/Done/Removed |
+| `WorkItemType` | string | no | `Any` | Epic / Feature / User Story / Task / Any |
+| `MaxResults` | integer | no | `50` | Cap on items returned |
+
+**Orchestrator instruction line (paste into the instructions, keep within the ~1,500-char band):**
+> To show a person their assigned items (their own or a named user's), use /List_Assigned_Work_Items.
 
 **`Create_Backlog_Tree`** — completion: **Send a specific response**
 ```
